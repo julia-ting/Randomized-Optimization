@@ -116,16 +116,6 @@ public class MyOptimizationProblemsDriver {
     	for (int i = 0; i < probs.length; i++) {
     		EvaluationFunction[] efs = probs[i].getEvalFuncs(); // had to do this for traveling salesman
     		
-//    		RandomizedHillClimbing rhc =
-//    				new RandomizedHillClimbing(probs[i].getHillClimbingProblem());
-//    		
-//    		double[][] resultsRhc = new double[numRuns][numIterations];
-//    		for (int j = 0; j < numRuns; j++) {
-//    			resultsRhc[j] = train((OptimizationAlgorithm)rhc, numIterations, efs[0]);
-//	    	}
-//    		Result rhcR = new Result(resultsRhc, 
-//    				"RHC", "numIterations," + numIterations);
-    		
     		String className = probs[i].getClass().getName().replace("optTests.","");
     		
     		RandomizedHillClimbingRunner rhcRun = 
@@ -144,27 +134,6 @@ public class MyOptimizationProblemsDriver {
     			}
     		}
     		
-//    		SimulatedAnnealing sa =
-//    				new SimulatedAnnealing(temps[i], coolingExp, probs[i].getHillClimbingProblem());
-//    		double[][] resultsSa = new double[numRuns][numIterations];
-//    		for (int j = 0; j < numRuns; j++) {
-//    			resultsSa[j] = train((OptimizationAlgorithm)sa, numIterations, efs[1]);
-//	    	}
-//    		Result saR = new Result(resultsSa, "SA",
-//    				"numIterations," + numIterations,
-//    				" temp,"+temps[i], " coolingExp," + coolingExp);
-
-//    		StandardGeneticAlgorithm ga = 
-//    				new StandardGeneticAlgorithm(popSize, toMate, toMutate,
-//    						probs[i].getGeneticAlgorithmProblem());
-//    		
-//    		double[][] resultsGa = new double[numRuns][numIterations];
-//    		for (int j = 0; j < numRuns; j++) {
-//    			resultsGa[j] = train((OptimizationAlgorithm)ga, numIterations, efs[2]);
-//	    	}
-//    		Result gaR = new Result(resultsGa, "GA",
-//    				"numIterations," + numIterations, " popSize,"+popSize,
-//    				" toMate," + toMate, " toMutate," + toMutate);
     		for (int m = 0; m < mates.length; m++) {
     			for (int n = 0; n < mutates.length; n++) {
 		    		GeneticAlgorithmRunner gaRun = new GeneticAlgorithmRunner(probs[i].getGeneticAlgorithmProblem(),
@@ -181,15 +150,6 @@ public class MyOptimizationProblemsDriver {
 		    		jobs.add(mimicRun);
 //    			}
 //    		}
-    		    		
-//    		MIMIC mimic = new MIMIC(samples, toKeep, probs[i].getProbOptProblem());
-//    		double[][] resultsMimic = new double[numRuns][numIterations];
-//    		for (int j = 0; j < numRuns; j++) {
-//    			resultsMimic[j] = train((OptimizationAlgorithm)mimic, numIterations, efs[3]);
-//	    	}
-//    		Result mimicR = new Result(resultsMimic,
-//    				"MIMIC", "numIterations," + numIterations,
-//    				" numSamplesGenerated," + samples, " numSamplesToKeep," + toKeep);
     		
     		//Result[] results = {rhcR, saR, gaR, mimicR};
     		//writeToCsv(fileName + probs[i].getClass().getName().replace("optTests.", "") + ".txt",  results);
@@ -210,28 +170,4 @@ public class MyOptimizationProblemsDriver {
     	}
     	
     }
-//	
-//    public static double[] train(OptimizationAlgorithm oa, int iterations, EvaluationFunction ef) {
-//        double[] results = new double[iterations+1];
-//        for (int i = 0; i < iterations; i++) {
-//        	oa.train();
-//        	results[i] = ef.value(oa.getOptimal());
-//        }
-//        results[iterations] = ef.value(oa.getOptimal());
-//        return results;
-//    }
-//    
-//    public static void writeToCsv(String fileName, Result ...results) {
-//    	try {
-//    		PrintWriter write = new PrintWriter(new File(fileName));
-//    		for (int i = 0; i < results.length; i++) {
-//    			write.println(results[i].toString());
-//    			write.println("");
-//    		}
-//    		write.close();
-//    	} catch (FileNotFoundException e) {
-//    		e.printStackTrace();
-//    	}
-//    	
-//    }
 }
