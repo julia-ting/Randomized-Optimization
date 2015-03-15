@@ -5,12 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import opt.EvaluationFunction;
-import opt.OptimizationAlgorithm;
-import opt.SimulatedAnnealing;
+import opt.example.NeuralNetworkOptimizationProblem;
 import opt.ga.GeneticAlgorithmProblem;
 import opt.ga.StandardGeneticAlgorithm;
+import shared.Instance;
 
-public class GeneticAlgorithmRunner implements Runnable {
+public class GeneticAlgorithmRunner implements OptimizationAlgorithmRunnable, Runnable {
 	private GeneticAlgorithmProblem gap;
 	private int iterations;
 	private int numRuns;
@@ -35,13 +35,23 @@ public class GeneticAlgorithmRunner implements Runnable {
 	public void run() {
 
 		double[][] resultsGa = new double[numRuns][iterations];
+		Instance[] optimalVals = new Instance[numRuns];
 		for (int j = 0; j < numRuns; j++) {
-			resultsGa[j] = train(new StandardGeneticAlgorithm(popSize, toMate, toMutate,
-					gap));
+			StandardGeneticAlgorithm ga = new StandardGeneticAlgorithm(popSize, toMate, toMutate,
+					gap);
+			resultsGa[j] = train(ga, ef, iterations);
+			optimalVals[j] = ga.getOptimal();
     	}
-		Result gaR = new Result(resultsGa, "GA",
+		Result gaR = null;
+		if (gap instanceof NeuralNetworkOptimizationProblem) {
+			gaR = new NnetResult(gap, optimalVals, resultsGa, "GA",
 				"numIterations," + iterations, " popSize,"+popSize,
-				" toMate," + toMate, " toMutate," + toMutate);
+				" toMate," + toMate, " toMutate," + toMutate );
+		} else {
+			gaR = new Result(resultsGa, "GA",
+					"numIterations," + iterations, " popSize,"+popSize,
+					" toMate," + toMate, " toMutate," + toMutate);
+		}
 
 		try {
 			PrintWriter write = new PrintWriter(new File(fileName+"M"+toMate+"N"+toMutate+"GA.txt"));
@@ -51,15 +61,5 @@ public class GeneticAlgorithmRunner implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	public double[] train(StandardGeneticAlgorithm oa) {
-        double[] results = new double[iterations+1];
-        for (int i = 0; i < iterations; i++) {
-        	oa.train();
-        	results[i] = ef.value(oa.getOptimal());
-        }
-        results[iterations] = ef.value(oa.getOptimal());
-        return results;
-    }
 	
 }

@@ -14,6 +14,7 @@ import shared.DataSet;
 import shared.ErrorMeasure;
 import dist.Distribution;
 import func.nn.backprop.BackPropagationNetwork;
+import func.nn.backprop.BackPropagationNetworkFactory;
 
 public class MyNeuralNet implements TestableOptimizationProblem {
 
@@ -28,20 +29,33 @@ public class MyNeuralNet implements TestableOptimizationProblem {
     private Distribution df;
     private HillClimbingProblem hcp;
     private GeneticAlgorithmProblem gap;
+    private BackPropagationNetworkFactory factory;
+    private int[] networkLayerCounts;
+    private DataSet set;
 	
 	public MyNeuralNet(DataSet set, int[] networkLayerCounts, ErrorMeasure measure) {
-		nnop = new NeuralNetworkOptimizationProblem(set, network, measure);
-		ef = new NeuralNetworkEvaluationFunction(network, set, measure);
+		this.measure = measure;
+		this.set = set;
+		this.networkLayerCounts = networkLayerCounts;
+		this.factory = new BackPropagationNetworkFactory();
+		this.network = factory.createClassificationNetwork(networkLayerCounts);
+		this.ef = new NeuralNetworkEvaluationFunction(network, set, measure);
 	}
 
 	@Override
 	public HillClimbingProblem getHillClimbingProblem() {
-		return nnop;
+		return new NeuralNetworkOptimizationProblem(
+				set,
+				factory.createClassificationNetwork(networkLayerCounts),
+				measure);
 	}
 
 	@Override
 	public GeneticAlgorithmProblem getGeneticAlgorithmProblem() {
-		return nnop;
+		return new NeuralNetworkOptimizationProblem(
+				set,
+				factory.createClassificationNetwork(networkLayerCounts),
+				measure);
 	}
 
 	@Override

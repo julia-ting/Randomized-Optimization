@@ -11,7 +11,7 @@ import opt.SimulatedAnnealing;
 import opt.prob.MIMIC;
 import opt.prob.ProbabilisticOptimizationProblem;
 
-public class MimicRunner implements Runnable {
+public class MimicRunner implements OptimizationAlgorithmRunnable, Runnable {
 	private ProbabilisticOptimizationProblem pop;
 	private int iterations;
 	private int numRuns;
@@ -37,7 +37,10 @@ public class MimicRunner implements Runnable {
 	public void run() {
 		double[][] resultsMimic = new double[numRuns][iterations];
 		for (int j = 0; j < numRuns; j++) {
-			resultsMimic[j] = train(new MIMIC(samples, toKeep, pop));
+			MIMIC oa = new MIMIC(samples, toKeep, pop);
+			resultsMimic[j] = train(
+					oa,
+					ef, iterations);
     	}
 		Result mimicR = new Result(resultsMimic,
 				"MIMIC", "numIterations," + iterations,
@@ -50,15 +53,5 @@ public class MimicRunner implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	public double[] train(MIMIC oa) {
-        double[] results = new double[iterations+1];
-        for (int i = 0; i < iterations; i++) {
-        	oa.train();
-        	results[i] = ef.value(oa.getOptimal());
-        }
-        results[iterations] = ef.value(oa.getOptimal());
-        return results;
-    }
 	
 }

@@ -43,6 +43,7 @@ public class TravelingSalesman implements TestableOptimizationProblem {
     private GeneticAlgorithmProblem gap;
     private ProbabilisticOptimizationProblem pop;
     private TravelingSalesmanEvaluationFunction sortEval;
+    private int[] ranges;
 
 	
 	public TravelingSalesman() {
@@ -59,30 +60,31 @@ public class TravelingSalesman implements TestableOptimizationProblem {
 	    this.cf = new TravelingSalesmanCrossOver((TravelingSalesmanEvaluationFunction)ef);
 	    
 	    sortEval = new TravelingSalesmanSortEvaluationFunction(points);
-	    int[] ranges = new int[N];
+	    ranges = new int[N];
         Arrays.fill(ranges, N);
         Distribution oddUniform = new  DiscreteUniformDistribution(ranges);
         df = new DiscreteDependencyTree(.1, ranges); 
         
-	    hcp = new GenericHillClimbingProblem(ef, odd, nf);
-	    gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
-	    pop = new GenericProbabilisticOptimizationProblem(sortEval, oddUniform, df);
+//	    hcp = new GenericHillClimbingProblem(ef, odd, nf);
+//	    gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
+//	    pop = new GenericProbabilisticOptimizationProblem(sortEval, oddUniform, df);
 	}
 	
 
 	@Override
 	public HillClimbingProblem getHillClimbingProblem() {
-		return hcp;
+		return new GenericHillClimbingProblem(ef, odd, nf);
 	}
 
 	@Override
 	public GeneticAlgorithmProblem getGeneticAlgorithmProblem() {
-		return gap;
+		return new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
 	}
 
 	@Override
 	public ProbabilisticOptimizationProblem getProbOptProblem() {
-		return pop;
+        Distribution oddUniform = new  DiscreteUniformDistribution(ranges);
+		return new GenericProbabilisticOptimizationProblem(sortEval, oddUniform, df);
 	}
 
 	@Override

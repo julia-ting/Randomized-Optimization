@@ -7,8 +7,10 @@ import java.io.PrintWriter;
 import opt.EvaluationFunction;
 import opt.HillClimbingProblem;
 import opt.SimulatedAnnealing;
+import opt.example.NeuralNetworkOptimizationProblem;
+import shared.Instance;
 
-public class SimulatedAnnealingRunner implements Runnable {
+public class SimulatedAnnealingRunner implements OptimizationAlgorithmRunnable, Runnable {
 	private HillClimbingProblem hcp;
 	private int iterations;
 	private int numRuns;
@@ -33,12 +35,23 @@ public class SimulatedAnnealingRunner implements Runnable {
 	@Override
 	public void run() {
 		double[][] resultsSa = new double[numRuns][iterations];
+		Instance[] optimalVals = new Instance[numRuns];
+
 		for (int j = 0; j < numRuns; j++) {
-			resultsSa[j] = train(new SimulatedAnnealing(temp, coolingExp, hcp));
+			SimulatedAnnealing sa = new SimulatedAnnealing(temp, coolingExp, hcp); 
+			resultsSa[j] = train(sa, ef, iterations);
+			optimalVals[j] = sa.getOptimal();
     	}
-		Result saR = new Result(resultsSa, "SA",
-				"numIterations," + iterations,
-				" temp,"+ temp, " coolingExp," + coolingExp);
+		Result saR = null;
+		if (hcp instanceof NeuralNetworkOptimizationProblem) {
+			saR = new NnetResult(hcp, optimalVals, resultsSa, "SA",
+					"numIterations," + iterations,
+					" temp,"+ temp, " coolingExp," + coolingExp);
+		} else {
+			saR = new Result(resultsSa, "SA",
+					"numIterations," + iterations,
+					" temp,"+ temp, " coolingExp," + coolingExp);
+		}
 		try {
 			PrintWriter write = new PrintWriter(new File(fileName+"T"+temp+"E"+coolingExp+"SA.txt"));
 			write.println(saR.toString());
@@ -48,14 +61,5 @@ public class SimulatedAnnealingRunner implements Runnable {
 		}
 	}
 	
-	public double[] train(SimulatedAnnealing oa) {
-        double[] results = new double[iterations+1];
-        for (int i = 0; i < iterations; i++) {
-        	oa.train();
-        	results[i] = ef.value(oa.getOptimal());
-        }
-        results[iterations] = ef.value(oa.getOptimal());
-        return results;
-    }
 	
 }

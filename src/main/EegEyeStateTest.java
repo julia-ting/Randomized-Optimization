@@ -67,24 +67,29 @@ public class EegEyeStateTest {
     	String oaName = "";
     	BackPropagationNetwork network = factory.createClassificationNetwork(networkLayers);
     	NeuralNetworkOptimizationProblem currNnop = null;
-    	System.out.println("Num training iterations? ");
-    	int trainingIterations = Integer.parseInt(keyboard.nextLine());
-    	System.out.println("How many times would you like to run this problem?");
-    	int numProbIterations = Integer.parseInt(keyboard.nextLine());
-    	System.out.println("File name to save?");
-    	String name = keyboard.nextLine();
-    	System.out.println("Start temp: ");
-		double startTemp = Double.parseDouble(keyboard.nextLine());
-		System.out.println("Cooling exp:");
-		double coolExp = Double.parseDouble(keyboard.nextLine());
-
-    	System.out.println("Population size: ");
-		int popSize = Integer.parseInt(keyboard.nextLine());
-		System.out.println("Num to mate each iteration: ");
-		int numMate = Integer.parseInt(keyboard.nextLine());
-		System.out.println("Num to mutate each iteration: ");
-		int numMutate = Integer.parseInt(keyboard.nextLine());
-
+//    	System.out.println("Num training iterations? ");
+//    	int trainingIterations = Integer.parseInt(keyboard.nextLine());
+//    	System.out.println("How many times would you like to run this problem?");
+//    	int numProbIterations = Integer.parseInt(keyboard.nextLine());
+//    	System.out.println("File name to save?");
+//    	String name = keyboard.nextLine();
+//    	System.out.println("Start temp: ");
+//		double startTemp = Double.parseDouble(keyboard.nextLine());
+//		System.out.println("Cooling exp:");
+//		double coolExp = Double.parseDouble(keyboard.nextLine());
+//
+//    	System.out.println("Population size: ");
+//		int popSize = Integer.parseInt(keyboard.nextLine());
+//		System.out.println("Num to mate each iteration: ");
+//		int numMate = Integer.parseInt(keyboard.nextLine());
+//		System.out.println("Num to mutate each iteration: ");
+//		int numMutate = Integer.parseInt(keyboard.nextLine());
+    	int popSize = 200;
+    	int numMate = 150;
+    	int numMutate = 25;
+    	String name = "200IterNnetOpt";
+    	int numProbIterations = 10;
+    	int trainingIterations = 200;
 //    	double neighborAdd = 0;
 //    	switch (oaProblem) {
 //    		case "1":
@@ -109,10 +114,9 @@ public class EegEyeStateTest {
 //    			break;
 //    		case "3":
     			
-    			for (int i = 0; i < numProbIterations; i++) {
+    			for (int i = 3; i < numProbIterations; i++) {
     				String results = runGA(trainingIterations, -1, popSize, numMate, numMutate);
     				writeResultsToFile(name+i+"GA.txt", results);
-
     			}
 //    			break;
     			
@@ -344,7 +348,7 @@ public class EegEyeStateTest {
             
             double error = calculateError(network, percentSplitIndex);
             String currError = i + ": " + df.format(error) + "\n";
-            //System.out.print(currError);
+            System.out.print(currError);
             results += currError;
             
         }
@@ -379,7 +383,6 @@ public class EegEyeStateTest {
             error += measure.value(expected, networkResult);
             
         }
-        System.out.println(error);
         return error; //nnet evaluation function is 1/error. That is our fitness function we are MAXIMIZING.
     }
     

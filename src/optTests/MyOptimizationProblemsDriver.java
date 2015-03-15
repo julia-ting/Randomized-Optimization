@@ -1,5 +1,8 @@
 package optTests;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,12 +14,15 @@ import java.util.concurrent.Future;
 import opt.EvaluationFunction;
 import shared.DataSet;
 import shared.ErrorMeasure;
+import shared.Instance;
 import shared.SumOfSquaresError;
 
 public class MyOptimizationProblemsDriver {
-
-	 /** The n value */
-    private static final int N = 50;
+	
+    private static final int NUM_INSTANCES = 14980;
+    private static final String DATA_FILE_NAME = "EEGEyeStateTesting.txt";
+	private static final int NUM_ATTRIBUTES = 14;
+	
     /**
      * The test main
      * @param args ignored
@@ -67,21 +73,21 @@ public class MyOptimizationProblemsDriver {
 //    	System.out.println("Name of file: ");
 //    	String fileName = key.nextLine();
     	
-    	System.out.println("Part 1 or Part 2:");
-    	String assignmentPart = key.nextLine();
+//    	System.out.println("Part 1 or Part 2:");
+//    	String assignmentPart = key.nextLine();
     	TestableOptimizationProblem[] probs = null;
     	boolean runMimic = false;
-    	
+    	String assignmentPart = "1";
     	if (assignmentPart.equals("1")) {
-    		System.out.println("Network node counts:");
-    		String[] nn = key.nextLine().split(" ");
-    		int[] network = new int[nn.length];
-    		for (int i = 0; i < nn.length; i++) {
-    			network[i] = Integer.parseInt(nn[i]);
-    		}
-    		ErrorMeasure measure = new SumOfSquaresError();
-    		DataSet set = null;
+//    		System.out.println("Network node counts:");
+//    		String[] nn = key.nextLine().split(" ");
+    		int[] network = { 14, 7, 1};
+//    		for (int i = 0; i < nn.length; i++) {
+//    			network[i] = Integer.parseInt(nn[i]);
+//    		}
     		
+    		ErrorMeasure measure = new SumOfSquaresError();
+    		DataSet set = new DataSet(initializeInstances());
     		probs = new TestableOptimizationProblem[] { new MyNeuralNet(set, network, measure) };
     	} else {
     		probs = new TestableOptimizationProblem[3];
@@ -94,10 +100,10 @@ public class MyOptimizationProblemsDriver {
     	List<Future> resultsF = new ArrayList<Future>();
     	List<Runnable> jobs = new ArrayList<Runnable>();
     	
-    	int numIterations = 2;
-    	int numRuns = 2;
+    	int numIterations = 2000;
+    	int numRuns = 10;
     	
-    	String fileName = "mimicPls";
+    	String fileName = "part1/";
     	double[] startTemps = { 1E9, 1E12, 1E15 };
     	double[] coolingExps = {.90, .95, .99};
  
@@ -125,7 +131,7 @@ public class MyOptimizationProblemsDriver {
     						fileName+className);
     		jobs.add(rhcRun);
     		
-    		for (int k = 0; k < startTemps.length; k++) {
+     		for (int k = 0; k < startTemps.length; k++) {
     			for (int l = 0; l < coolingExps.length; l++) {
 		    		SimulatedAnnealingRunner saRun =
 		    				new SimulatedAnnealingRunner(probs[i].getHillClimbingProblem(), numIterations,
@@ -133,7 +139,9 @@ public class MyOptimizationProblemsDriver {
 		    		jobs.add(saRun);
     			}
     		}
-    		
+    		if (!runMimic) {
+    			numIterations = numIterations / 10;
+    		}
     		for (int m = 0; m < mates.length; m++) {
     			for (int n = 0; n < mutates.length; n++) {
 		    		GeneticAlgorithmRunner gaRun = new GeneticAlgorithmRunner(probs[i].getGeneticAlgorithmProblem(),
@@ -142,15 +150,15 @@ public class MyOptimizationProblemsDriver {
 
     			}
     		}
-    		
-//    		for (int s = 0; s < samplesSize.length; s++) {
-//    			for (int toK = 0; toK < toKeeps.length; toK++) {
-		    		MimicRunner mimicRun = new MimicRunner(probs[i].getProbOptProblem(),
-		    				numIterations, numRuns, efs[3], 200, 100, fileName+className);
-		    		jobs.add(mimicRun);
-//    			}
-//    		}
-    		
+    		if (runMimic) {
+	    		for (int s = 0; s < samplesSize.length; s++) {
+	    			for (int toK = 0; toK < toKeeps.length; toK++) {
+			    		MimicRunner mimicRun = new MimicRunner(probs[i].getProbOptProblem(),
+			    				numIterations, numRuns, efs[3], samplesSize[s], toKeeps[toK], fileName+className);
+			    		jobs.add(mimicRun);
+	    			}
+	    		}
+    		}
     		//Result[] results = {rhcR, saR, gaR, mimicR};
     		//writeToCsv(fileName + probs[i].getClass().getName().replace("optTests.", "") + ".txt",  results);
     		
@@ -169,5 +177,40 @@ public class MyOptimizationProblemsDriver {
     		exec.shutdown();
     	}
     	
+    }
+    
+    
+    public static Instance[] initializeInstances() {
+
+        double[][][] attributes = new double[NUM_INSTANCES][][];
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File(DATA_FILE_NAME)));
+
+            for(int i = 0; i < attributes.length; i++) {
+                Scanner scan = new Scanner(br.readLine());
+                scan.useDelimiter(",");
+
+                attributes[i] = new double[2][]; // for attribute array and label array
+                attributes[i][0] = new double[NUM_ATTRIBUTES]; // attributes
+                attributes[i][1] = new double[1]; // label
+
+                for(int j = 0; j < NUM_ATTRIBUTES; j++)
+                    attributes[i][0][j] = Double.parseDouble(scan.next()); // scan attribute
+
+                attributes[i][1][0] = Double.parseDouble(scan.next()); // scan label
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        Instance[] instances = new Instance[attributes.length];
+
+        for(int i = 0; i < instances.length; i++) {
+            instances[i] = new Instance(attributes[i][0]);
+            instances[i].setLabel(new Instance(attributes[i][1][0]));
+        }
+        return instances;
     }
 }

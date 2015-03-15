@@ -71,17 +71,17 @@ public class Knapsack implements TestableOptimizationProblem {
     
 	@Override
 	public HillClimbingProblem getHillClimbingProblem() {
-		return hcp;
+		return new GenericHillClimbingProblem(ef, odd, nf);
 	}
 
 	@Override
 	public GeneticAlgorithmProblem getGeneticAlgorithmProblem() {
-		return gap;
+		return new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
 	}
 
 	@Override
 	public ProbabilisticOptimizationProblem getProbOptProblem() {
-		return pop;
+		return new GenericProbabilisticOptimizationProblem(ef, odd, df);
 	}
 
 	@Override

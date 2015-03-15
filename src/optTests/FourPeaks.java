@@ -51,24 +51,24 @@ public class FourPeaks implements TestableOptimizationProblem {
     	mf = new DiscreteChangeOneMutation(ranges);
     	cf = new SingleCrossOver();
     	df = new DiscreteDependencyTree(.1, ranges); 
-    	hcp = new GenericHillClimbingProblem(ef, odd, nf);
-    	gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
-    	pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
+//    	hcp = new GenericHillClimbingProblem(ef, odd, nf);
+//    	gap = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
+//    	pop = new GenericProbabilisticOptimizationProblem(ef, odd, df);
     }
     
     @Override
     public HillClimbingProblem getHillClimbingProblem() {
-    	return hcp;
+    	return new GenericHillClimbingProblem(ef, odd, nf);
     }
     
     @Override
     public GeneticAlgorithmProblem getGeneticAlgorithmProblem() {
-    	return gap;
+    	return new GenericGeneticAlgorithmProblem(ef, odd, mf, cf);
     }
     
     @Override
     public ProbabilisticOptimizationProblem getProbOptProblem() {
-    	return pop;
+    	return new GenericProbabilisticOptimizationProblem(ef, odd, df);
     }
 
 	@Override

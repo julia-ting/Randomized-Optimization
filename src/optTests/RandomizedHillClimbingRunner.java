@@ -6,10 +6,11 @@ import java.io.PrintWriter;
 
 import opt.EvaluationFunction;
 import opt.HillClimbingProblem;
-import opt.OptimizationAlgorithm;
 import opt.RandomizedHillClimbing;
+import opt.example.NeuralNetworkOptimizationProblem;
+import shared.Instance;
 
-public class RandomizedHillClimbingRunner implements Runnable {
+public class RandomizedHillClimbingRunner implements OptimizationAlgorithmRunnable, Runnable {
 
 	private HillClimbingProblem hcp;
 	private int iterations;
@@ -29,11 +30,19 @@ public class RandomizedHillClimbingRunner implements Runnable {
 	@Override
 	public void run() {
 		double[][] resultsRhc = new double[numRuns][iterations];
+		Instance[] optimalVals = new Instance[numRuns];
 		for (int j = 0; j < numRuns; j++) {
-			resultsRhc[j] = train(new RandomizedHillClimbing(hcp));
+			RandomizedHillClimbing rhc = new RandomizedHillClimbing(hcp); 
+			resultsRhc[j] = train(rhc, ef, iterations);
+			optimalVals[j] = rhc.getOptimal();
     	}
-		Result rhcR = new Result(resultsRhc, 
+		Result rhcR = null;
+		if (hcp instanceof NeuralNetworkOptimizationProblem) {
+			rhcR = new NnetResult(hcp, optimalVals, resultsRhc, "RHC", "numIterations," + iterations);
+		} else {
+			rhcR = new Result(resultsRhc, 
 				"RHC", "numIterations," + iterations);
+		}
 		try {
 			PrintWriter write = new PrintWriter(new File(fileName+"RHC.txt"));
 			write.println(rhcR.toString());
@@ -43,15 +52,6 @@ public class RandomizedHillClimbingRunner implements Runnable {
 		}
 	}
 	
-	public double[] train(RandomizedHillClimbing oa) {
-        double[] results = new double[iterations+1];
-        for (int i = 0; i < iterations; i++) {
-        	oa.train();
-        	results[i] = ef.value(oa.getOptimal());
-        }
-        results[iterations] = ef.value(oa.getOptimal());
-        return results;
-    }
 	
 	
 }
