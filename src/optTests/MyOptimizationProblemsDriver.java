@@ -77,7 +77,7 @@ public class MyOptimizationProblemsDriver {
 //    	String assignmentPart = key.nextLine();
     	TestableOptimizationProblem[] probs = null;
     	boolean runMimic = false;
-    	String assignmentPart = "1";
+    	String assignmentPart = "2";
     	if (assignmentPart.equals("1")) {
 //    		System.out.println("Network node counts:");
 //    		String[] nn = key.nextLine().split(" ");
@@ -100,37 +100,52 @@ public class MyOptimizationProblemsDriver {
     	List<Future> resultsF = new ArrayList<Future>();
     	List<Runnable> jobs = new ArrayList<Runnable>();
     	
-    	int numIterations = 2000;
+    	int numIterations = 10000;
     	int numRuns = 10;
     	
-    	String fileName = "part1/";
-    	double[] startTemps = { 1E9, 1E12, 1E15 };
-    	double[] coolingExps = {.90, .95, .99};
+    	String fileName = "part2SAExtra/";
+    	double[] startTemps = { 1E9, 1E12};
+    	double[] coolingExps = {.90, .95};
  
     	// vary start temp and cooling exp
     	
     	int[] mates = { 125, 150, 175 };
     	int[] mutates = { 10, 15, 20, 25 };
     	// vary mutate and mate for GA
-
     	int[] samplesSize = { 200, 250, 300 };
-    	int[] toKeeps = {50, 75, 100};
+    	double[] toKeeps = {.1, .15, .2, .25, .50 };
     	
     	int popSize = 200;
     	// sample size and to keep size
     	
-    	for (int i = 0; i < probs.length; i++) {
+    	for (int i = 0; i < 1; i++) {
     		EvaluationFunction[] efs = probs[i].getEvalFuncs(); // had to do this for traveling salesman
     		
     		String className = probs[i].getClass().getName().replace("optTests.","");
     		
-    		RandomizedHillClimbingRunner rhcRun = 
-    				new RandomizedHillClimbingRunner(
-    						probs[i].getHillClimbingProblem(),
-    						numIterations, numRuns, efs[0],
-    						fileName+className);
-    		jobs.add(rhcRun);
+//    		if (runMimic) {
+//	    		for (int s = 0; s < samplesSize.length; s++) {
+//	    			for (int toK = 0; toK < toKeeps.length; toK++) {
+//			    		MimicRunner mimicRun = new MimicRunner(probs[i].getProbOptProblem(),
+//			    				numIterations, numRuns, efs[3], samplesSize[s], (int)(samplesSize[s]*toKeeps[toK]), fileName+className);
+//			    		jobs.add(mimicRun);
+//	    			}
+//	    		}
+//    		}
     		
+//    		if (!runMimic) {
+//    			numIterations = numIterations / 20;
+//    		}
+    		
+//    		for (int m = 0; m < mates.length; m++) {
+//    			for (int n = 0; n < mutates.length; n++) {
+//		    		GeneticAlgorithmRunner gaRun = new GeneticAlgorithmRunner(probs[i].getGeneticAlgorithmProblem(),
+//		    				numIterations, numRuns, efs[2], popSize, mates[m], mutates[n], fileName+className);
+//		    		jobs.add(gaRun);
+//
+//    			}
+//    		}
+//
      		for (int k = 0; k < startTemps.length; k++) {
     			for (int l = 0; l < coolingExps.length; l++) {
 		    		SimulatedAnnealingRunner saRun =
@@ -139,26 +154,13 @@ public class MyOptimizationProblemsDriver {
 		    		jobs.add(saRun);
     			}
     		}
-    		if (!runMimic) {
-    			numIterations = numIterations / 10;
-    		}
-    		for (int m = 0; m < mates.length; m++) {
-    			for (int n = 0; n < mutates.length; n++) {
-		    		GeneticAlgorithmRunner gaRun = new GeneticAlgorithmRunner(probs[i].getGeneticAlgorithmProblem(),
-		    				numIterations, numRuns, efs[2], popSize, mates[m], mutates[n], fileName+className);
-		    		jobs.add(gaRun);
-
-    			}
-    		}
-    		if (runMimic) {
-	    		for (int s = 0; s < samplesSize.length; s++) {
-	    			for (int toK = 0; toK < toKeeps.length; toK++) {
-			    		MimicRunner mimicRun = new MimicRunner(probs[i].getProbOptProblem(),
-			    				numIterations, numRuns, efs[3], samplesSize[s], toKeeps[toK], fileName+className);
-			    		jobs.add(mimicRun);
-	    			}
-	    		}
-    		}
+//    		
+//    		RandomizedHillClimbingRunner rhcRun = 
+//    				new RandomizedHillClimbingRunner(
+//    						probs[i].getHillClimbingProblem(),
+//    						numIterations, numRuns, efs[0],
+//    						fileName+className);
+//    		jobs.add(rhcRun);
     		//Result[] results = {rhcR, saR, gaR, mimicR};
     		//writeToCsv(fileName + probs[i].getClass().getName().replace("optTests.", "") + ".txt",  results);
     		

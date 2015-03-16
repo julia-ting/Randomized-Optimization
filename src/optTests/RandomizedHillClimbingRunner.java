@@ -44,7 +44,7 @@ public class RandomizedHillClimbingRunner implements OptimizationAlgorithmRunnab
 				"RHC", "numIterations," + iterations);
 		}
 		try {
-			PrintWriter write = new PrintWriter(new File(fileName+"RHC.txt"));
+			PrintWriter write = new PrintWriter(new File(fileName+"RHC.csv"));
 			write.println(rhcR.toString());
 			write.close();
 		} catch (FileNotFoundException e) {

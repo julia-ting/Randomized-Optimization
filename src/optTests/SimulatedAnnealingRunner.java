@@ -53,7 +53,7 @@ public class SimulatedAnnealingRunner implements OptimizationAlgorithmRunnable, 
 					" temp,"+ temp, " coolingExp," + coolingExp);
 		}
 		try {
-			PrintWriter write = new PrintWriter(new File(fileName+"T"+temp+"E"+coolingExp+"SA.txt"));
+			PrintWriter write = new PrintWriter(new File(fileName+"T"+temp+"E"+coolingExp+"SA.csv"));
 			write.println(saR.toString());
 			write.close();
 		} catch (FileNotFoundException e) {

@@ -46,7 +46,7 @@ public class MimicRunner implements OptimizationAlgorithmRunnable, Runnable {
 				"MIMIC", "numIterations," + iterations,
 				" numSamplesGenerated," + samples, " numSamplesToKeep," + toKeep);
 		try {
-			PrintWriter write = new PrintWriter(new File(fileName+"S"+samples+"K"+toKeep+"MIMIC.txt"));
+			PrintWriter write = new PrintWriter(new File(fileName+"S"+samples+"K"+toKeep+"MIMIC.csv"));
 			write.println(mimicR.toString());
 			write.close();
 		} catch (FileNotFoundException e) {

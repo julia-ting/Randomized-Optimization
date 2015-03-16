@@ -54,7 +54,7 @@ public class GeneticAlgorithmRunner implements OptimizationAlgorithmRunnable, Ru
 		}
 
 		try {
-			PrintWriter write = new PrintWriter(new File(fileName+"M"+toMate+"N"+toMutate+"GA.txt"));
+			PrintWriter write = new PrintWriter(new File(fileName+"M"+toMate+"N"+toMutate+"GA.csv"));
 			write.println(gaR.toString());
 			write.close();
 		} catch (FileNotFoundException e) {

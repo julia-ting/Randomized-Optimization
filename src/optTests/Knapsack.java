@@ -46,6 +46,7 @@ public class Knapsack implements TestableOptimizationProblem {
     private HillClimbingProblem hcp;
     private GeneticAlgorithmProblem gap;
     private ProbabilisticOptimizationProblem pop;
+    private int[] ranges;
     
     public Knapsack() {
     	int[] copies = new int[NUM_ITEMS];
@@ -56,7 +57,7 @@ public class Knapsack implements TestableOptimizationProblem {
             weights[i] = random.nextDouble() * MAX_WEIGHT;
             volumes[i] = random.nextDouble() * MAX_VOLUME;
         }
-         int[] ranges = new int[NUM_ITEMS];
+        ranges = new int[NUM_ITEMS];
         Arrays.fill(ranges, COPIES_EACH + 1);
         ef = new KnapsackEvaluationFunction(weights, volumes, KNAPSACK_VOLUME, copies);
         odd = new DiscreteUniformDistribution(ranges);
@@ -81,6 +82,7 @@ public class Knapsack implements TestableOptimizationProblem {
 
 	@Override
 	public ProbabilisticOptimizationProblem getProbOptProblem() {
+        Distribution df = new DiscreteDependencyTree(.1, ranges); 
 		return new GenericProbabilisticOptimizationProblem(ef, odd, df);
 	}
 

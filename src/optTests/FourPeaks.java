@@ -68,6 +68,7 @@ public class FourPeaks implements TestableOptimizationProblem {
     
     @Override
     public ProbabilisticOptimizationProblem getProbOptProblem() {
+    	Distribution df = new DiscreteDependencyTree(.1, ranges); 
     	return new GenericProbabilisticOptimizationProblem(ef, odd, df);
     }
 

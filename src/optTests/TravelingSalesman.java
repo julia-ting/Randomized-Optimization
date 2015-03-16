@@ -84,6 +84,7 @@ public class TravelingSalesman implements TestableOptimizationProblem {
 	@Override
 	public ProbabilisticOptimizationProblem getProbOptProblem() {
         Distribution oddUniform = new  DiscreteUniformDistribution(ranges);
+        Distribution df = new DiscreteDependencyTree(.1, ranges); 
 		return new GenericProbabilisticOptimizationProblem(sortEval, oddUniform, df);
 	}
 

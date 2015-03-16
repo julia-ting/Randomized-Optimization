@@ -29,8 +29,9 @@ public class NnetResult extends Result {
 		}
 		result += "+++++++++++++++++++++++++++++++++++++++++++++++\n";
 		double[][] results = getResults();
+		result += "Run#,";
 		for (int run = 0; run < results.length; run++) {
-			result += "RunNumber," + run + ",";
+			result += run + ",";
 		}
 		result = result.substring(0, result.length());
 		result += "\n";
@@ -84,12 +85,13 @@ public class NnetResult extends Result {
 	}
 	
 	private double[][] calculateCorrectlyClassified(int totalRuns) {
-		double predicted, actual = 0;
-		int correct = 0, incorrect = 0;
+	
 		Instance[] instances = ((NeuralNetworkOptimizationProblem)op).getDataSet().getInstances();
 		BackPropagationNetwork network = (BackPropagationNetwork)((NeuralNetworkOptimizationProblem)op).getNetwork();
 		double[][] accuracy = new double[totalRuns][3];
 		for (int run = 0; run < totalRuns; run++) {
+			double predicted, actual = 0;
+			int correct = 0, incorrect = 0;
 			double start = System.nanoTime();
 			network.setWeights(optimalVals[run].getData());
 			for(int j = 0; j < instances.length; j++) {
